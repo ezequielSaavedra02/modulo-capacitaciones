@@ -1,90 +1,65 @@
-// src/api/participacionesApi.js
+import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api'; // Asegúrate de que esta URL coincida con la de tu backend
+const API_BASE_URL = 'http://localhost:8080/api';
 
-// Función para obtener todas las participaciones
+const api = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+
 export const getAllParticipaciones = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/participaciones`);
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-        }
-        return await response.json();
+        const response = await api.get('/participaciones');
+        return response.data;
     } catch (error) {
         console.error("Error al obtener participaciones:", error);
+        if (error.response) { console.error("Detalles del error (Axios):", error.response.data, error.response.status); }
         throw error;
     }
 };
 
-// Función para obtener una participación por ID
 export const getParticipacionById = async (id) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/participaciones/${id}`);
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-        }
-        return await response.json();
+        const response = await api.get(`/participaciones/${id}`);
+        return response.data;
     } catch (error) {
         console.error(`Error al obtener participación con ID ${id}:`, error);
+        if (error.response) { console.error("Detalles del error (Axios):", error.response.data, error.response.status); }
         throw error;
     }
 };
 
-// Función para crear una nueva participación
 export const createParticipacion = async (participacionData) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/participaciones`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(participacionData),
-        });
-        if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText} - ${errorBody}`);
-        }
-        return await response.json();
+        const response = await api.post('/participaciones', participacionData);
+        return response.data;
     } catch (error) {
         console.error("Error al crear participación:", error);
+        if (error.response) { console.error("Detalles del error (Axios):", error.response.data, error.response.status); }
         throw error;
     }
 };
 
-// Función para actualizar una participación existente
 export const updateParticipacion = async (id, participacionData) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/participaciones/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(participacionData),
-        });
-        if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText} - ${errorBody}`);
-        }
-        return await response.json();
+        const response = await api.put(`/participaciones/${id}`, participacionData);
+        return response.data;
     } catch (error) {
         console.error(`Error al actualizar participación con ID ${id}:`, error);
+        if (error.response) { console.error("Detalles del error (Axios):", error.response.data, error.response.status); }
         throw error;
     }
 };
 
-// Función para eliminar una participación
 export const deleteParticipacion = async (id) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/participaciones/${id}`, {
-            method: 'DELETE',
-        });
-        if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText} - ${errorBody}`);
-        }
-        return true; // Retorna true si la eliminación fue exitosa
+        await api.delete(`/participaciones/${id}`);
+        return true;
     } catch (error) {
         console.error(`Error al eliminar participación con ID ${id}:`, error);
+        if (error.response) { console.error("Detalles del error (Axios):", error.response.data, error.response.status); }
         throw error;
     }
 };
